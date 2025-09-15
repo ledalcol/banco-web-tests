@@ -2,7 +2,7 @@ describe('Login', () => {
   beforeEach(()=> {
 
     //Acesso ao site
-    cy.visit('http://localhost:4000')
+    cy.visit(Cypress.env('URL'))
     cy.screenshot('apos-visitar-pagina')
   })
 
