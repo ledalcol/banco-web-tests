@@ -5,35 +5,25 @@ describe('Transferencias', () => {
     cy.visit('/')
     
     //Login
-    cy.fixture('credenciais').then(credenciais => {
-      cy.get('#username').click().type(credenciais.valida.usuario)
-      cy.get('#senha').click().type(credenciais.valida.senha)
-    }) 
-
-    cy.get('#login-section > .btn').click()
+    cy.fazerLoginComCredenciaisValidas()
 
     //Verificação
     cy.contains('h4','Realizar Transferência').should('be.visible')
-})
+  })
 
-    it('Deve transferir quando informo dados de valor válidos', () => {
-    
-    //Seleção de conta origem    
-    cy.get('label[for ="conta-origem"]').parent().as('campo-conta-origem')
-    cy.get('@campo-conta-origem').click()
-    cy.get('@campo-conta-origem').contains('João da Silva').click()
+  //Transferência abaixo de R$5000,00
+  it('Deve apresentar uma mensagem de erro quando for houver a tentativa de transferências com valores acima de R$ 5.000,00', () => {
 
-    //Seleção de conta destino   
-    cy.get('label[for ="conta-destino"]').parent().as('campo-conta-destino')
-    cy.get('@campo-conta-destino').click()
-    cy.get('@campo-conta-destino').contains('Maria Oliveira').click()
+    //Transação e verificação
+    cy.realizarTransferencia('João da Silva', 'Maria Oliveira', '10','Transferência realizada!')
+  })
 
-    //Valores
-    cy.get('#valor').click().type('50')
-    cy.contains('button', 'Transferir').click()
+  //Transferência acima de R$5000,00 sem token
+  it('Deve apresentar uma mensagem de erro quando for houver a tentativa de transferências com valores acima de R$ 5.000,00', () => {
 
-    //Verificação
-    cy.get('.toast').should('have.text', 'Transferência realizada!') 
+    //Transação e verificação
+    cy.realizarTransferencia('João da Silva', 'Maria Oliveira', '6000', 'Autenticação necessária para transferências acima de R$5.000,00.')
 
   })
+  
 })
